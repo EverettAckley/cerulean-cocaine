@@ -1,7 +1,7 @@
 {
   "name": "Bird Caller Pro",
   "short_name": "Bird Caller",
-  "start_url": "birdplayer.html",
+  "start_url": "index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#2e8b57",
