@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bird Caller Pro</title>
+    
+    <!-- Links to your app manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: 40px auto; padding: 20px; text-align: center; }
+        .button-grid { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; }
+        button { padding: 15px 25px; font-size: 16px; cursor: pointer; border-radius: 8px; border: 1px solid #ccc; background-color: #f0f8ff; transition: 0.2s; }
+        button:hover { background-color: #e0f0ff; }
+        .controls { margin: 20px 0; padding: 15px; background: #eee; border-radius: 8px; }
+        #queue-list { list-style: none; padding: 0; text-align: left; background: #fafafa; border: 1px solid #ddd; padding: 10px; border-radius: 8px; min-height: 50px;}
+        .now-playing { font-weight: bold; color: #2e8b57; }
+    </style>
+</head>
+<body>
+
+    <h1>🐦 Custom Bird Caller</h1>
+
+    <!-- The Soundboard Buttons: Update these with your exact .mp3 file names -->
+    <div class="button-grid">
+        <button onclick="addToQueue('bird1.mp3', 'Robin')">Robin</button>
+        <button onclick="addToQueue('bird2.mp3', 'Blue Jay')">Blue Jay</button>
+        <button onclick="addToQueue('bird3.mp3', 'Owl')">Owl</button>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+        <button id="loop-btn" onclick="toggleLoop()">Loop Queue: OFF</button>
+        <button onclick="clearQueue()">Clear Queue</button>
+        <button onclick="skipCurrent()">Skip Current</button>
+    </div>
+
+    <!-- Queue Display -->
+    <h3>Up Next:</h3>
+    <div id="now-playing" class="now-playing">Nothing playing</div>
+    <ul id="queue-list"></ul>
+
+    <script>
+        // --- AUDIO PLAYER LOGIC ---
+        let queue = [];
+        let isPlaying = false;
+        let isLooping = false;
+        let currentAudio = null;
+
+        function addToQueue(filename, birdName) {
+            queue.push({ filename, birdName });
+            updateQueueUI();
+            if (!isPlaying) playNext();
+        }
+
+        function playNext() {
+            if (queue.length === 0) {
+                isPlaying = false;
+                document.getElementById('now-playing').innerText = "Nothing playing";
+                return;
+            }
+
+            isPlaying = true;
+            const currentTrack = queue.shift();
+
+            if (isLooping) queue.push(currentTrack);
+            
+            updateQueueUI();
+            document.getElementById('now-playing').innerText = `🔊 Now Playing: ${currentTrack.birdName}`;
+
+            currentAudio = new Audio(currentTrack.filename);
+            currentAudio.play();
+
+            currentAudio.onended = () => playNext();
+        }
+
+        function toggleLoop() {
+            isLooping = !isLooping;
+            document.getElementById('loop-btn').innerText = isLooping ? "Loop Queue: ON" : "Loop Queue: OFF";
+            document.getElementById('loop-btn').style.backgroundColor = isLooping ? "#d4edda" : "#f0f8ff";
+        }
+
+        function skipCurrent() {
+            if (currentAudio) {
+                currentAudio.pause(); 
+                playNext();
+            }
+        }
+
+        function clearQueue() {
+            queue = [];
+            updateQueueUI();
+        }
+
+        function updateQueueUI() {
+            const listElement = document.getElementById('queue-list');
+            listElement.innerHTML = ""; 
+            queue.forEach((item, index) => {
+                const li = document.createElement('li');
+                li.innerText = `${index + 1}. ${item.birdName}`;
+                listElement.appendChild(li);
+            });
+        }
+
+        // --- OFFLINE SERVICE WORKER REGISTRATION ---
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('Offline support enabled!'))
+                    .catch(err => console.error('Offline support failed', err));
+            });
+        }
+    </script>
+</body>
+</html>
