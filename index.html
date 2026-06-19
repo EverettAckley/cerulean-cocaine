@@ -21,7 +21,6 @@
 
     <h1>🐦 Cerulean Caller</h1>
 
-    <!-- Updated with your specific Cerulean files -->
     <div class="button-grid">
         <button onclick="addToQueue('Cerulean Mixtape.mp3', 'Cerulean Mixtape')">Mixtape</button>
         <button onclick="addToQueue('Sibly Cerulean Chitter Full.mp3', 'Chitter Full')">Chitter</button>
@@ -32,20 +31,17 @@
         <button onclick="addToQueue('Sibly Cerulean Song 5.mp3', 'Song 5')">Song 5</button>
     </div>
 
-    <!-- Controls -->
     <div class="controls">
         <button id="loop-btn" onclick="toggleLoop()">Loop Queue: OFF</button>
         <button onclick="clearQueue()">Clear Queue</button>
         <button onclick="skipCurrent()">Skip Current</button>
     </div>
 
-    <!-- Queue Display -->
     <h3>Up Next:</h3>
     <div id="now-playing" class="now-playing">Nothing playing</div>
     <ul id="queue-list"></ul>
 
     <script>
-        // --- AUDIO PLAYER LOGIC ---
         let queue = [];
         let isPlaying = false;
         let isLooping = false;
@@ -72,10 +68,21 @@
             updateQueueUI();
             document.getElementById('now-playing').innerText = `🔊 Now Playing: ${currentTrack.birdName}`;
 
-            currentAudio = new Audio(currentTrack.filename);
-            currentAudio.play();
-
-            currentAudio.onended = () => playNext();
+            // --- iOS OFFLINE AUDIO FIX ---
+            // Fetch the file as a raw data blob first to bypass Apple's media player bugs
+            fetch(currentTrack.filename)
+                .then(response => response.blob())
+                .then(blob => {
+                    const objectUrl = URL.createObjectURL(blob);
+                    currentAudio = new Audio(objectUrl);
+                    currentAudio.play();
+                    currentAudio.onended = () => playNext();
+                })
+                .catch(error => {
+                    console.error("Error loading offline audio:", error);
+                    document.getElementById('now-playing').innerText = "Error loading offline audio";
+                    playNext(); // Try the next track if this one fails
+                });
         }
 
         function toggleLoop() {
@@ -106,7 +113,6 @@
             });
         }
 
-        // --- OFFLINE SERVICE WORKER REGISTRATION ---
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
