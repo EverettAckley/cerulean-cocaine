@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bird-player-v13';
+const CACHE_NAME = 'bird-player-v14';
 
 const urlsToCache = [
   'index.html',
