@@ -1,14 +1,19 @@
-const CACHE_NAME = 'bird-player-v2';
+// Bumped to v3 so the phone knows to grab the new files
+const CACHE_NAME = 'bird-player-v3';
 
-// Note: No forward slashes at the start of these names!
+// Exact file names from your image
 const urlsToCache = [
   'index.html',
   'manifest.json',
   'icon.png',
   'sw.js',
-  'bird1.mp3',
-  'bird2.mp3',
-  'bird3.mp3'
+  'Cerulean Mixtape.mp3',
+  'Sibly Cerulean Chitter Full.mp3',
+  'Sibly Cerulean Song 1.mp3',
+  'Sibly Cerulean Song 2.mp3',
+  'Sibly Cerulean Song 3.mp3',
+  'Sibly Cerulean Song 4.mp3',
+  'Sibly Cerulean Song 5.mp3'
 ];
 
 // Install the Service Worker and cache the files
