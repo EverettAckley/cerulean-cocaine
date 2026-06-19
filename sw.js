@@ -1,19 +1,18 @@
-// Bumped to v5 to force phone to download the new code and files
-const CACHE_NAME = 'bird-player-v5';
+// Bumped to v7 to force the app to grab the new JPEG icon, new app name, and code fixes
+const CACHE_NAME = 'bird-player-v7';
 
-// List every single .mp3 file name EXACTLY as it appears on GitHub
 const urlsToCache = [
   'index.html',
   'manifest.json',
-  'icon.png',
+  'icon.jpeg',
   'sw.js',
-  'Cerulean Mixtape.mp3',
-  'Sibly Cerulean Chitter Full.mp3',
-  'Sibly Cerulean Song 1.mp3',
-  'Sibly Cerulean Song 2.mp3',
-  'Sibly Cerulean Song 3.mp3',
-  'Sibly Cerulean Song 4.mp3',
-  'Sibly Cerulean Song 5.mp3'
+  'Cerulean%20Mixtape.mp3',
+  'Sibly%20Cerulean%20Chitter%20Full.mp3',
+  'Sibly%20Cerulean%20Song%201.mp3',
+  'Sibly%20Cerulean%20Song%202.mp3',
+  'Sibly%20Cerulean%20Song%203.mp3',
+  'Sibly%20Cerulean%20Song%204.mp3',
+  'Sibly%20Cerulean%20Song%205.mp3'
 ];
 
 self.addEventListener('install', event => {
@@ -22,15 +21,12 @@ self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
-        // Add all files, explicitly including index.html to ensure it's cached.
-        // Caching should be done with exact names, including spaces.
         return cache.addAll(urlsToCache);
       })
   );
 });
 
 self.addEventListener('activate', event => {
-  // Deletes any old cache versions to free up space
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return Promise.all(
