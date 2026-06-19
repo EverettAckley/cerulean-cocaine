@@ -1,34 +1,36 @@
-const CACHE_NAME = 'bird-player-v4';
+// Bumped to v5 to force phone to download the new code and files
+const CACHE_NAME = 'bird-player-v5';
 
-// Use %20 to represent spaces, avoiding URL mismatches in the cache
+// List every single .mp3 file name EXACTLY as it appears on GitHub
 const urlsToCache = [
   'index.html',
   'manifest.json',
   'icon.png',
   'sw.js',
-  'Cerulean%20Mixtape.mp3',
-  'Sibly%20Cerulean%20Chitter%20Full.mp3',
-  'Sibly%20Cerulean%20Song%201.mp3',
-  'Sibly%20Cerulean%20Song%202.mp3',
-  'Sibly%20Cerulean%20Song%203.mp3',
-  'Sibly%20Cerulean%20Song%204.mp3',
-  'Sibly%20Cerulean%20Song%205.mp3'
+  'Cerulean Mixtape.mp3',
+  'Sibly Cerulean Chitter Full.mp3',
+  'Sibly Cerulean Song 1.mp3',
+  'Sibly Cerulean Song 2.mp3',
+  'Sibly Cerulean Song 3.mp3',
+  'Sibly Cerulean Song 4.mp3',
+  'Sibly Cerulean Song 5.mp3'
 ];
 
 self.addEventListener('install', event => {
-  // Forces the new Service Worker to take over immediately
   self.skipWaiting(); 
   
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
+        // Add all files, explicitly including index.html to ensure it's cached.
+        // Caching should be done with exact names, including spaces.
         return cache.addAll(urlsToCache);
       })
   );
 });
 
 self.addEventListener('activate', event => {
-  // Deletes any old cache versions (like v1, v2, v3) to free up space
+  // Deletes any old cache versions to free up space
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return Promise.all(
@@ -40,13 +42,11 @@ self.addEventListener('activate', event => {
       );
     })
   );
-  // Tell the active clients to use the new cache immediately
   self.clients.claim(); 
 });
 
 self.addEventListener('fetch', event => {
   event.respondWith(
-    // ignoreSearch helps prevent mismatches if query parameters get added
     caches.match(event.request, { ignoreSearch: true })
       .then(response => {
         return response || fetch(event.request);
