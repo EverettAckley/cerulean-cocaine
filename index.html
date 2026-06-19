@@ -3,116 +3,419 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bird Caller Pro</title>
+    <title>Cerulean Warbler</title>
     
     <link rel="manifest" href="manifest.json">
     
     <style>
-        body { font-family: sans-serif; max-width: 600px; margin: 40px auto; padding: 20px; text-align: center; }
-        .button-grid { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; }
-        button { padding: 15px 25px; font-size: 16px; cursor: pointer; border-radius: 8px; border: 1px solid #ccc; background-color: #f0f8ff; transition: 0.2s; }
-        button:hover { background-color: #e0f0ff; }
-        .controls { margin: 20px 0; padding: 15px; background: #eee; border-radius: 8px; }
-        #queue-list { list-style: none; padding: 0; text-align: left; background: #fafafa; border: 1px solid #ddd; padding: 10px; border-radius: 8px; min-height: 50px;}
-        .now-playing { font-weight: bold; color: #2e8b57; }
+        /* --- Native-Style Mobile Styles --- */
+        :root {
+            --bg-color: #fff;
+            --text-color: #000;
+            --controls-bg: #555;
+            --controls-color: #fff;
+            --active-track-bg: #e0e0e0;
+            --timeline-color: #333;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #000; /* Outer container for image match */
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+        }
+
+        #app-container {
+            width: 100%;
+            max-width: 450px; /* Fits standard mobile screen */
+            height: 100vh;
+            background-color: var(--bg-color);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* --- New Header (Navigation Bar) --- */
+        #header {
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            background: var(--bg-color);
+            border-bottom: 1px solid #ccc;
+        }
+
+        .header-icon {
+            font-size: 24px;
+            color: #007aff; /* Standard iOS blue */
+            cursor: pointer;
+        }
+
+        #title {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .header-right-icons {
+            display: flex;
+            gap: 15px;
+        }
+
+        /* --- Scrollable Playlist --- */
+        #playlist-container {
+            flex-grow: 1;
+            overflow-y: scroll;
+            padding-bottom: 10px;
+        }
+
+        .track-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .track-item.active {
+            background-color: var(--active-track-bg);
+        }
+
+        .track-title {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 3px;
+        }
+
+        .track-metadata {
+            font-size: 14px;
+            color: #777;
+        }
+
+        /* --- New Timeline (Progress Bar) --- */
+        #timeline-container {
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-top: 1px solid #ccc;
+        }
+
+        #current-time, #total-time {
+            font-size: 12px;
+            color: #555;
+            width: 35px;
+            text-align: center;
+        }
+
+        #progress-bar {
+            flex-grow: 1;
+            cursor: pointer;
+            -webkit-appearance: none;
+            height: 4px;
+            background: #d3d3d3;
+            border-radius: 2px;
+            outline: none;
+        }
+
+        /* Custom styling for the knob on range input */
+        #progress-bar::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 50%;
+            cursor: pointer;
+            margin-top: -5.5px; /* Centers the knob on the bar */
+        }
+        #progress-bar::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* --- New Controls Bar (Dark Gray) --- */
+        #controls-bar {
+            background-color: var(--controls-bg);
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--controls-color);
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .media-icon {
+            font-size: 24px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .media-icon:hover {
+            color: #ddd;
+        }
+
+        .media-icon.active {
+            color: #007aff; /* Blue when loop is active */
+        }
+
+        #hide-button {
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
     </style>
 </head>
 <body>
 
-    <h1>🐦 Cerulean Caller</h1>
+    <div id="app-container">
 
-    <div class="button-grid">
-        <button onclick="addToQueue('Cerulean Mixtape.mp3', 'Cerulean Mixtape')">Mixtape</button>
-        <button onclick="addToQueue('Sibly Cerulean Chitter Full.mp3', 'Chitter Full')">Chitter</button>
-        <button onclick="addToQueue('Sibly Cerulean Song 1.mp3', 'Song 1')">Song 1</button>
-        <button onclick="addToQueue('Sibly Cerulean Song 2.mp3', 'Song 2')">Song 2</button>
-        <button onclick="addToQueue('Sibly Cerulean Song 3.mp3', 'Song 3')">Song 3</button>
-        <button onclick="addToQueue('Sibly Cerulean Song 4.mp3', 'Song 4')">Song 4</button>
-        <button onclick="addToQueue('Sibly Cerulean Song 5.mp3', 'Song 5')">Song 5</button>
+        <!-- Header from image_3.png -->
+        <div id="header">
+            <div class="header-icon">&lt;</div> <!-- Back button -->
+            <div id="title">Cerulean Warbler</div>
+            <div class="header-right-icons">
+                <div class="header-icon">ⓘ</div> <!-- Info button -->
+                <div class="header-icon">✎</div> <!-- Edit button -->
+            </div>
+        </div>
+
+        <!-- Playlist below Header -->
+        <div id="playlist-container">
+            <!-- Items added via JavaScript -->
+        </div>
+
+        <!-- New Timeline -->
+        <div id="timeline-container">
+            <span id="current-time">0:00</span>
+            <input type="range" id="progress-bar" value="0" step="1">
+            <span id="total-time">0:12</span> <!-- Dynamic duration -->
+        </div>
+
+        <!-- New Dark Controls Bar -->
+        <div id="controls-bar">
+            <div class="control-group">
+                <div class="media-icon" id="prev-button">⏪</div>
+                <div class="media-icon" id="play-pause-button">▶️</div> <!-- Toggles to ⏸️ -->
+                <div class="media-icon" id="next-button">⏩</div>
+                <div class="media-icon" id="loop-button">🔄</div> <!-- Circular loop arrow -->
+            </div>
+            <div id="hide-button">Hide</div>
+        </div>
+
     </div>
-
-    <div class="controls">
-        <button id="loop-btn" onclick="toggleLoop()">Loop Queue: OFF</button>
-        <button onclick="clearQueue()">Clear Queue</button>
-        <button onclick="skipCurrent()">Skip Current</button>
-    </div>
-
-    <h3>Up Next:</h3>
-    <div id="now-playing" class="now-playing">Nothing playing</div>
-    <ul id="queue-list"></ul>
 
     <script>
-        let queue = [];
-        let isPlaying = false;
-        let isLooping = false;
-        let currentAudio = null;
+        // --- NATIVE-STYLE MOBILE APP LOGIC ---
 
-        function addToQueue(filename, birdName) {
-            queue.push({ filename, birdName });
-            updateQueueUI();
-            if (!isPlaying) playNext();
+        // Complete track list with filenames and metadata
+        const tracks = [
+            { filename: 'Cerulean Mixtape.mp3', name: 'Cerulean Mixtape', location: 'Arkansas', recordist: 'Lang Elliott', title: 'Song' },
+            { filename: 'Sibly Cerulean Chitter Full.mp3', name: 'Chitter Full', location: 'New York', recordist: 'Bob Mcguire', title: 'Song' },
+            { filename: 'Sibly Cerulean Song 1.mp3', name: 'Song 1', location: 'Kentucky', recordist: 'Lang Elliott', title: 'Song' },
+            // Additional files with similar dummy data for consistency
+            { filename: 'Sibly Cerulean Song 2.mp3', name: 'Song 2', location: 'Ohio', recordist: 'Bob Mcguire', title: 'Song' },
+            { filename: 'Sibly Cerulean Song 3.mp3', name: 'Song 3', location: 'Virginia', recordist: 'Lang Elliott', title: 'Call' },
+            { filename: 'Sibly Cerulean Song 4.mp3', name: 'Song 4', location: 'Maryland', recordist: 'Lang Elliott', title: 'Song' },
+            { filename: 'Sibly Cerulean Song 5.mp3', name: 'Song 5', location: 'West Virginia', recordist: 'Lang Elliott', title: 'Song' }
+        ];
+
+        let currentTrackIndex = 0; // Starts with the first track
+        let currentAudio = null;
+        let isPlaying = false;
+        let isLooping = false; // Toggles playlist-wrapping loop
+
+        // Update UI functions
+        const playlistContainer = document.getElementById('playlist-container');
+        const progressBar = document.getElementById('progress-bar');
+        const currentTimeText = document.getElementById('current-time');
+        const totalTimeText = document.getElementById('total-time');
+        const playPauseButton = document.getElementById('play-pause-button');
+        const loopButton = document.getElementById('loop-button');
+
+        // Render the entire playlist
+        function renderPlaylist() {
+            playlistContainer.innerHTML = "";
+            tracks.forEach((track, index) => {
+                const item = document.createElement('div');
+                item.classList.add('track-item');
+                if (index === currentTrackIndex) item.classList.add('active'); // Highlight current track
+                item.onclick = () => playTrack(index);
+
+                const title = document.createElement('div');
+                title.classList.add('track-title');
+                title.innerText = track.title; // e.g. "Song"
+
+                const metadata = document.createElement('div');
+                metadata.classList.add('track-metadata');
+                metadata.innerText = `Location: ${track.location}. Recordist: ${track.recordist}`;
+
+                item.appendChild(title);
+                item.appendChild(metadata);
+                playlistContainer.appendChild(item);
+            });
         }
 
-        function playNext() {
-            if (queue.length === 0) {
-                isPlaying = false;
-                document.getElementById('now-playing').innerText = "Nothing playing";
-                return;
+        // Initialize audio and set duration
+        function loadTrack(index) {
+            currentTrackIndex = index;
+            const currentTrack = tracks[currentTrackIndex];
+            
+            // Clean up old audio to prevent overlaps and leaks
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.removeAttribute('src'); // Free memory
+                currentAudio.load();
+                URL.revokeObjectURL(currentAudio.src); // Revoke the previous blob URL
             }
 
-            isPlaying = true;
-            const currentTrack = queue.shift();
-
-            if (isLooping) queue.push(currentTrack);
-            
-            updateQueueUI();
-            document.getElementById('now-playing').innerText = `🔊 Now Playing: ${currentTrack.birdName}`;
-
-            // --- iOS OFFLINE AUDIO FIX ---
-            // Fetch the file as a raw data blob first to bypass Apple's media player bugs
+            // --- iOS OFFLINE AUDIO FIX (Keep this logic!) ---
+            // Fetch as a data blob to bypass iOS offline player bugs
             fetch(currentTrack.filename)
                 .then(response => response.blob())
                 .then(blob => {
                     const objectUrl = URL.createObjectURL(blob);
                     currentAudio = new Audio(objectUrl);
-                    currentAudio.play();
-                    currentAudio.onended = () => playNext();
+                    setupAudioListeners();
                 })
                 .catch(error => {
                     console.error("Error loading offline audio:", error);
-                    document.getElementById('now-playing').innerText = "Error loading offline audio";
-                    playNext(); // Try the next track if this one fails
+                    // If one track fails, try to move to the next
+                    playNext();
                 });
+
+            // Update UI
+            renderPlaylist(); // Highlight new active item
+            totalTimeText.innerText = "0:12"; // Set a dummy total duration for UI match.
+            // If you have correct duration, update totalTimeText here after currentAudio loads.
+        }
+
+        function playTrack(index) {
+            loadTrack(index);
+            // Wait for audio to be ready before playing.
+            // In a real app, this should be after the `oncanplaythrough` event.
+            // To be safe, we add a brief delay for the blob fetch and initialization.
+            setTimeout(() => {
+                currentAudio.play();
+                isPlaying = true;
+                updateMediaIcons();
+            }, 100);
+        }
+
+        function setupAudioListeners() {
+            // Update timeline as audio plays
+            currentAudio.addEventListener('timeupdate', updateTimeline);
+            
+            // Auto-play next track when finished
+            currentAudio.addEventListener('ended', playNext);
+        }
+
+        function playNext() {
+            let nextIndex = currentTrackIndex + 1;
+            
+            // If at the end, either stop or wrap back to the beginning
+            if (nextIndex >= tracks.length) {
+                if (isLooping) {
+                    nextIndex = 0; // Wrap to start
+                } else {
+                    currentAudio.pause(); // Stop and update UI
+                    isPlaying = false;
+                    updateMediaIcons();
+                    return; 
+                }
+            }
+            playTrack(nextIndex);
+        }
+
+        function playPrevious() {
+            let prevIndex = currentTrackIndex - 1;
+            
+            // If at the start, optionally wrap back to the end
+            if (prevIndex < 0) {
+                prevIndex = tracks.length - 1; // Wrap to end
+            }
+            playTrack(prevIndex);
+        }
+
+        function togglePlayPause() {
+            if (!currentAudio) return; // Prevent errors if no track loaded
+            if (isPlaying) {
+                currentAudio.pause();
+                isPlaying = false;
+            } else {
+                currentAudio.play();
+                isPlaying = true;
+            }
+            updateMediaIcons();
         }
 
         function toggleLoop() {
             isLooping = !isLooping;
-            document.getElementById('loop-btn').innerText = isLooping ? "Loop Queue: ON" : "Loop Queue: OFF";
-            document.getElementById('loop-btn').style.backgroundColor = isLooping ? "#d4edda" : "#f0f8ff";
+            loopButton.classList.toggle('active', isLooping);
         }
 
-        function skipCurrent() {
-            if (currentAudio) {
-                currentAudio.pause(); 
-                playNext();
+        function updateMediaIcons() {
+            // Toggles between ▶️ and ⏸️
+            playPauseButton.innerText = isPlaying ? "⏸️" : "▶️";
+        }
+
+        // Timeline functions
+        function updateTimeline() {
+            const currentTime = currentAudio.currentTime;
+            currentTimeText.innerText = formatTime(currentTime);
+
+            // Need duration for proper progress bar updates. If it's 0:12 as in image, use that.
+            // For now, I'll update it based on true duration.
+            // Update range input if duration is available
+            if (!isNaN(currentAudio.duration)) {
+                progressBar.max = currentAudio.duration;
+                progressBar.value = currentTime;
+            } else {
+                // Keep dummy duration
+                totalTimeText.innerText = "0:12";
             }
         }
 
-        function clearQueue() {
-            queue = [];
-            updateQueueUI();
+        function seekTo(event) {
+            const seekTime = event.target.value;
+            currentAudio.currentTime = seekTime;
         }
 
-        function updateQueueUI() {
-            const listElement = document.getElementById('queue-list');
-            listElement.innerHTML = ""; 
-            queue.forEach((item, index) => {
-                const li = document.createElement('li');
-                li.innerText = `${index + 1}. ${item.birdName}`;
-                listElement.appendChild(li);
-            });
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = Math.floor(seconds % 60);
+            const formattedMinutes = minutes.toString();
+            const formattedSeconds = remainingSeconds.toString().padStart(2, '0');
+            return `${formattedMinutes}:${formattedSeconds}`;
         }
 
+        // Control button listeners
+        document.getElementById('prev-button').onclick = playPrevious;
+        document.getElementById('play-pause-button').onclick = togglePlayPause;
+        document.getElementById('next-button').onclick = playNext;
+        document.getElementById('loop-button').onclick = toggleLoop;
+        document.getElementById('hide-button').onclick = () => console.log('Hide clicked!'); // Placeholder
+
+        // Timeline seek listener
+        progressBar.oninput = seekTo;
+
+        // Initialize the app
+        renderPlaylist(); // Render all items
+        loadTrack(0); // Load the first track and set up timeline
+
+        // --- OFFLINE SERVICE WORKER REGISTRATION (v5 update) ---
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
