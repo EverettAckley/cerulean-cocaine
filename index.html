@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bird Caller Pro</title>
     
-    <!-- Links to your app manifest -->
     <link rel="manifest" href="manifest.json">
     
     <style>
@@ -20,13 +19,17 @@
 </head>
 <body>
 
-    <h1>🐦 Custom Bird Caller</h1>
+    <h1>🐦 Cerulean Caller</h1>
 
-    <!-- The Soundboard Buttons: Update these with your exact .mp3 file names -->
+    <!-- Updated with your specific Cerulean files -->
     <div class="button-grid">
-        <button onclick="addToQueue('bird1.mp3', 'Robin')">Robin</button>
-        <button onclick="addToQueue('bird2.mp3', 'Blue Jay')">Blue Jay</button>
-        <button onclick="addToQueue('bird3.mp3', 'Owl')">Owl</button>
+        <button onclick="addToQueue('Cerulean Mixtape.mp3', 'Cerulean Mixtape')">Mixtape</button>
+        <button onclick="addToQueue('Sibly Cerulean Chitter Full.mp3', 'Chitter Full')">Chitter</button>
+        <button onclick="addToQueue('Sibly Cerulean Song 1.mp3', 'Song 1')">Song 1</button>
+        <button onclick="addToQueue('Sibly Cerulean Song 2.mp3', 'Song 2')">Song 2</button>
+        <button onclick="addToQueue('Sibly Cerulean Song 3.mp3', 'Song 3')">Song 3</button>
+        <button onclick="addToQueue('Sibly Cerulean Song 4.mp3', 'Song 4')">Song 4</button>
+        <button onclick="addToQueue('Sibly Cerulean Song 5.mp3', 'Song 5')">Song 5</button>
     </div>
 
     <!-- Controls -->
@@ -106,7 +109,6 @@
         // --- OFFLINE SERVICE WORKER REGISTRATION ---
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                // Ensure this points to the exact name of your service worker file
                 navigator.serviceWorker.register('sw.js')
                     .then(reg => console.log('Offline support enabled!'))
                     .catch(err => console.error('Offline support failed', err));
