@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bird-player-v9';
+const CACHE_NAME = 'bird-player-v13';
 
 const urlsToCache = [
   'index.html',
@@ -11,7 +11,18 @@ const urlsToCache = [
   'Sibley%20Cerulean%20Song%202.mp3',
   'Sibley%20Cerulean%20Song%203.mp3',
   'Sibley%20Cerulean%20Song%204.mp3',
-  'Sibley%20Cerulean%20Song%205.mp3'
+  'Sibley%20Cerulean%20Song%205.mp3',
+  'Warbler%20Guide%20Chip.mp3',
+  'Warbler%20Guide%20Flight%20Guide.mp3',
+  'Warbler%20Guide%20Type%20A1.mp3',
+  'Warbler%20Guide%20Type%20A2.mp3',
+  'Warbler%20Guide%20Type%20A3.mp3',
+  'Merlin%20Song%201.mp3',
+  'Merlin%20Song%202.mp3',
+  'Merlin%20Song%203.mp3',
+  'Merlin%20Chirp%20Calls.mp3',
+  'Merlin%20Tink%20Calls.mp3',
+  'Merlin%20Flight%20Calls.mp3'
 ];
 
 self.addEventListener('install', event => {
