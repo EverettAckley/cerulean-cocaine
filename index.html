@@ -8,13 +8,14 @@
     <link rel="manifest" href="manifest.json">
     
     <style>
+        /* --- Cerulean Blue Theme --- */
         :root {
-            --bg-color: #fff;
-            --text-color: #000;
-            --controls-bg: #555;
-            --controls-color: #fff;
-            --active-track-bg: #e0e0e0;
-            --timeline-color: #333;
+            --bg-color: #ffffff;
+            --text-color: #111827;
+            --primary-blue: #2563eb; /* Vibrant Cerulean Blue */
+            --light-blue: #eff6ff;   /* Very light blue for active tracks */
+            --dark-blue: #1e3a8a;    /* Deep navy for the controls bar */
+            --controls-color: #ffffff;
         }
 
         body {
@@ -44,14 +45,17 @@
             align-items: center;
             justify-content: center; 
             padding: 0 15px;
-            background: var(--bg-color);
-            border-bottom: 1px solid #ccc;
+            background: var(--primary-blue);
+            color: white;
+            border-bottom: 1px solid #1d4ed8;
             z-index: 20;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         #title {
             font-size: 18px;
             font-weight: 600;
+            letter-spacing: 0.5px;
         }
 
         #content-area {
@@ -83,6 +87,7 @@
             font-size: 18px;
             border-bottom: 1px solid #eee;
             background: #fafafa;
+            color: var(--primary-blue);
         }
 
         #queue-list {
@@ -100,7 +105,9 @@
         }
 
         .track-item.active {
-            background-color: var(--active-track-bg);
+            background-color: var(--light-blue);
+            border-left: 4px solid var(--primary-blue);
+            padding-left: 11px; /* Adjust padding to account for the left border */
         }
 
         .track-info {
@@ -116,37 +123,42 @@
             margin-bottom: 3px;
         }
 
+        .track-item.active .track-title {
+            color: var(--primary-blue);
+        }
+
         .track-metadata {
             font-size: 12px;
-            color: #777;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            color: #6b7280;
+            line-height: 1.3;
         }
 
         .action-btn {
-            font-size: 20px;
+            font-size: 22px;
             padding: 5px 10px;
-            color: #007aff;
+            color: var(--primary-blue);
             cursor: pointer;
             background: none;
             border: none;
+            font-weight: bold;
         }
 
         #timeline-container {
-            padding: 10px 15px;
+            padding: 12px 15px;
             display: flex;
             align-items: center;
             gap: 10px;
             border-top: 1px solid #ccc;
+            background: #f8fafc;
             z-index: 20;
         }
 
         #current-time, #total-time {
             font-size: 12px;
-            color: #555;
+            color: #4b5563;
             width: 35px;
             text-align: center;
+            font-weight: 500;
         }
 
         #progress-bar {
@@ -160,7 +172,7 @@
         #progress-bar::-webkit-slider-runnable-track {
             width: 100%;
             height: 4px;
-            background: #d3d3d3;
+            background: #cbd5e1;
             border-radius: 2px;
         }
 
@@ -168,31 +180,16 @@
             -webkit-appearance: none;
             height: 16px;
             width: 16px;
-            background: #fff;
-            border: 1px solid #ccc;
+            background: var(--primary-blue);
+            border: 2px solid #fff;
             border-radius: 50%;
             cursor: pointer;
             margin-top: -6px;
-        }
-
-        #progress-bar::-moz-range-track {
-            width: 100%;
-            height: 4px;
-            background: #d3d3d3;
-            border-radius: 2px;
-        }
-
-        #progress-bar::-moz-range-thumb {
-            height: 16px;
-            width: 16px;
-            background: #fff;
-            border: 1px solid #ccc;
-            border-radius: 50%;
-            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
         }
 
         #controls-bar {
-            background-color: var(--controls-bg);
+            background-color: var(--dark-blue);
             padding: 15px 25px 40px 25px;
             display: flex;
             align-items: center;
@@ -212,8 +209,8 @@
             cursor: pointer;
             transition: 0.2s;
             color: var(--controls-color);
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -221,8 +218,9 @@
         }
 
         .media-icon.active {
-            background-color: #007aff;
+            background-color: var(--primary-blue);
             color: #fff;
+            box-shadow: 0 0 10px rgba(37, 99, 235, 0.5);
         }
     </style>
 </head>
@@ -264,13 +262,29 @@
 
     <script>
         const tracks = [
+            // Original Tracks
             { filename: 'Cerulean Mixtape.mp3', title: 'Cerulean Mixtape', location: 'Various Locations', recordist: 'Everett Ackley', source: 'Sibley' },
             { filename: 'Sibley Cerulean Chitter Full.mp3', title: 'Sibley Chitter Full', location: 'Kentucky', recordist: 'Lang Elliott', source: 'Sibley' },
             { filename: 'Sibley Cerulean Song 1.mp3', title: 'Sibley Song 1', location: 'Kentucky', recordist: 'Lang Elliott', source: 'Sibley' },
             { filename: 'Sibley Cerulean Song 2.mp3', title: 'Sibley Song 2', location: 'Kentucky', recordist: 'Lang Elliott', source: 'Sibley' },
             { filename: 'Sibley Cerulean Song 3.mp3', title: 'Sibley Song 3', location: 'Kentucky', recordist: 'Lang Elliott', source: 'Sibley' },
             { filename: 'Sibley Cerulean Song 4.mp3', title: 'Sibley Song 4', location: 'New York', recordist: 'Bob McGuire', source: 'Sibley' },
-            { filename: 'Sibley Cerulean Song 5.mp3', title: 'Sibley Song 5', location: 'Arkansas', recordist: 'Lang Elliott', source: 'Sibley' }
+            { filename: 'Sibley Cerulean Song 5.mp3', title: 'Sibley Song 5', location: 'Arkansas', recordist: 'Lang Elliott', source: 'Sibley' },
+            
+            // Warbler Guide Tracks
+            { filename: 'Warbler Guide Chip.mp3', title: 'Warbler Guide Chip', location: 'Various', recordist: 'Unknown', source: 'Warbler Guide' },
+            { filename: 'Warbler Guide Flight Guide.mp3', title: 'Warbler Guide Flight Guide', location: 'Various', recordist: 'Unknown', source: 'Warbler Guide' },
+            { filename: 'Warbler Guide Type A1.mp3', title: 'Warbler Guide Type A1', location: 'Various', recordist: 'Unknown', source: 'Warbler Guide' },
+            { filename: 'Warbler Guide Type A2.mp3', title: 'Warbler Guide Type A2', location: 'Various', recordist: 'Unknown', source: 'Warbler Guide' },
+            { filename: 'Warbler Guide Type A3.mp3', title: 'Warbler Guide Type A3', location: 'Various', recordist: 'Unknown', source: 'Warbler Guide' },
+
+            // New Merlin Tracks
+            { filename: 'Merlin Song 1.mp3', title: 'Merlin Song 1', location: 'Various', recordist: 'Unknown', source: 'Merlin' },
+            { filename: 'Merlin Song 2.mp3', title: 'Merlin Song 2', location: 'Various', recordist: 'Unknown', source: 'Merlin' },
+            { filename: 'Merlin Song 3.mp3', title: 'Merlin Song 3', location: 'Various', recordist: 'Unknown', source: 'Merlin' },
+            { filename: 'Merlin Chirp Calls.mp3', title: 'Merlin Chirp Calls', location: 'Various', recordist: 'Unknown', source: 'Merlin' },
+            { filename: 'Merlin Tink Calls.mp3', title: 'Merlin Tink Calls', location: 'Various', recordist: 'Unknown', source: 'Merlin' },
+            { filename: 'Merlin Flight Calls.mp3', title: 'Merlin Flight Calls', location: 'Various', recordist: 'Unknown', source: 'Merlin' }
         ];
 
         let currentTrackIndex = 0;
@@ -350,7 +364,7 @@
 
                 const removeBtn = document.createElement('button');
                 removeBtn.classList.add('action-btn');
-                removeBtn.style.color = "#ff3b30";
+                removeBtn.style.color = "#ef4444";
                 removeBtn.innerText = "❌";
                 removeBtn.onclick = () => {
                     upNextQueue.splice(queuePosition, 1);
