@@ -22,7 +22,7 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #000; /* Outer container for image match */
+            background-color: #000;
             color: var(--text-color);
             display: flex;
             justify-content: center;
@@ -30,7 +30,7 @@
 
         #app-container {
             width: 100%;
-            max-width: 450px; /* Fits standard mobile screen */
+            max-width: 450px;
             height: 100vh;
             background-color: var(--bg-color);
             display: flex;
@@ -38,21 +38,14 @@
             overflow: hidden;
         }
 
-        /* --- New Header (Navigation Bar) --- */
         #header {
             height: 60px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center; /* Centered the title since buttons are gone */
             padding: 0 15px;
             background: var(--bg-color);
             border-bottom: 1px solid #ccc;
-        }
-
-        .header-icon {
-            font-size: 24px;
-            color: #007aff; /* Standard iOS blue */
-            cursor: pointer;
         }
 
         #title {
@@ -60,12 +53,6 @@
             font-weight: 500;
         }
 
-        .header-right-icons {
-            display: flex;
-            gap: 15px;
-        }
-
-        /* --- Scrollable Playlist --- */
         #playlist-container {
             flex-grow: 1;
             overflow-y: scroll;
@@ -92,9 +79,9 @@
         .track-metadata {
             font-size: 14px;
             color: #777;
+            line-height: 1.4;
         }
 
-        /* --- New Timeline (Progress Bar) --- */
         #timeline-container {
             padding: 10px 15px;
             display: flex;
@@ -120,7 +107,6 @@
             outline: none;
         }
 
-        /* Custom styling for the knob on range input */
         #progress-bar::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
@@ -130,7 +116,7 @@
             border: 1px solid #ccc;
             border-radius: 50%;
             cursor: pointer;
-            margin-top: -5.5px; /* Centers the knob on the bar */
+            margin-top: -5.5px;
         }
         #progress-bar::-moz-range-thumb {
             width: 15px;
@@ -141,20 +127,19 @@
             cursor: pointer;
         }
 
-        /* --- New Controls Bar (Dark Gray) --- */
         #controls-bar {
             background-color: var(--controls-bg);
             padding: 15px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center; /* Centered the controls since hide button is gone */
             color: var(--controls-color);
         }
 
         .control-group {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 25px; /* Spaced out slightly more for easier tapping */
         }
 
         .media-icon {
@@ -168,13 +153,7 @@
         }
 
         .media-icon.active {
-            color: #007aff; /* Blue when loop is active */
-        }
-
-        #hide-button {
-            font-size: 16px;
-            cursor: pointer;
-            transition: 0.2s;
+            color: #007aff;
         }
     </style>
 </head>
@@ -182,37 +161,27 @@
 
     <div id="app-container">
 
-        <!-- Header from image_3.png -->
         <div id="header">
-            <div class="header-icon">&lt;</div> <!-- Back button -->
             <div id="title">Cerulean Warbler</div>
-            <div class="header-right-icons">
-                <div class="header-icon">ⓘ</div> <!-- Info button -->
-                <div class="header-icon">✎</div> <!-- Edit button -->
-            </div>
         </div>
 
-        <!-- Playlist below Header -->
         <div id="playlist-container">
             <!-- Items added via JavaScript -->
         </div>
 
-        <!-- New Timeline -->
         <div id="timeline-container">
             <span id="current-time">0:00</span>
             <input type="range" id="progress-bar" value="0" step="1">
-            <span id="total-time">0:12</span> <!-- Dynamic duration -->
+            <span id="total-time">0:12</span>
         </div>
 
-        <!-- New Dark Controls Bar -->
         <div id="controls-bar">
             <div class="control-group">
                 <div class="media-icon" id="prev-button">⏪</div>
-                <div class="media-icon" id="play-pause-button">▶️</div> <!-- Toggles to ⏸️ -->
+                <div class="media-icon" id="play-pause-button">▶️</div>
                 <div class="media-icon" id="next-button">⏩</div>
-                <div class="media-icon" id="loop-button">🔄</div> <!-- Circular loop arrow -->
+                <div class="media-icon" id="loop-button">🔄</div>
             </div>
-            <div id="hide-button">Hide</div>
         </div>
 
     </div>
@@ -220,24 +189,21 @@
     <script>
         // --- NATIVE-STYLE MOBILE APP LOGIC ---
 
-        // Complete track list with filenames and metadata
         const tracks = [
-            { filename: 'Cerulean Mixtape.mp3', name: 'Cerulean Mixtape', location: 'Arkansas', recordist: 'Lang Elliott', title: 'Song' },
-            { filename: 'Sibly Cerulean Chitter Full.mp3', name: 'Chitter Full', location: 'New York', recordist: 'Bob Mcguire', title: 'Song' },
-            { filename: 'Sibly Cerulean Song 1.mp3', name: 'Song 1', location: 'Kentucky', recordist: 'Lang Elliott', title: 'Song' },
-            // Additional files with similar dummy data for consistency
-            { filename: 'Sibly Cerulean Song 2.mp3', name: 'Song 2', location: 'Ohio', recordist: 'Bob Mcguire', title: 'Song' },
-            { filename: 'Sibly Cerulean Song 3.mp3', name: 'Song 3', location: 'Virginia', recordist: 'Lang Elliott', title: 'Call' },
-            { filename: 'Sibly Cerulean Song 4.mp3', name: 'Song 4', location: 'Maryland', recordist: 'Lang Elliott', title: 'Song' },
-            { filename: 'Sibly Cerulean Song 5.mp3', name: 'Song 5', location: 'West Virginia', recordist: 'Lang Elliott', title: 'Song' }
+            { filename: 'Cerulean Mixtape.mp3', name: 'Cerulean Mixtape', location: 'Various Locations', recordist: 'Everett Ackley', title: 'Song', source: 'Sibly' },
+            { filename: 'Sibly Cerulean Chitter Full.mp3', name: 'Chitter Full', location: 'Kentucky', recordist: 'Lang Elliott', title: 'Song', source: 'Sibly' },
+            { filename: 'Sibly Cerulean Song 1.mp3', name: 'Song 1', location: 'Kentucky', recordist: 'Lang Elliott', title: 'Song', source: 'Sibly' },
+            { filename: 'Sibly Cerulean Song 2.mp3', name: 'Song 2', location: 'Kentucky', recordist: 'Lang Elliott', title: 'Song', source: 'Sibly' },
+            { filename: 'Sibly Cerulean Song 3.mp3', name: 'Song 3', location: 'Kentucky', recordist: 'Lang Elliott', title: 'Song', source: 'Sibly' },
+            { filename: 'Sibly Cerulean Song 4.mp3', name: 'Song 4', location: 'New York', recordist: 'Bob McGuire', title: 'Song', source: 'Sibly' },
+            { filename: 'Sibly Cerulean Song 5.mp3', name: 'Song 5', location: 'Alaska', recordist: 'Lang Elliott', title: 'Song', source: 'Sibly' }
         ];
 
-        let currentTrackIndex = 0; // Starts with the first track
+        let currentTrackIndex = 0;
         let currentAudio = null;
         let isPlaying = false;
-        let isLooping = false; // Toggles playlist-wrapping loop
+        let isLooping = false;
 
-        // Update UI functions
         const playlistContainer = document.getElementById('playlist-container');
         const progressBar = document.getElementById('progress-bar');
         const currentTimeText = document.getElementById('current-time');
@@ -245,22 +211,21 @@
         const playPauseButton = document.getElementById('play-pause-button');
         const loopButton = document.getElementById('loop-button');
 
-        // Render the entire playlist
         function renderPlaylist() {
             playlistContainer.innerHTML = "";
             tracks.forEach((track, index) => {
                 const item = document.createElement('div');
                 item.classList.add('track-item');
-                if (index === currentTrackIndex) item.classList.add('active'); // Highlight current track
+                if (index === currentTrackIndex) item.classList.add('active');
                 item.onclick = () => playTrack(index);
 
                 const title = document.createElement('div');
                 title.classList.add('track-title');
-                title.innerText = track.title; // e.g. "Song"
+                title.innerText = track.title;
 
                 const metadata = document.createElement('div');
                 metadata.classList.add('track-metadata');
-                metadata.innerText = `Location: ${track.location}. Recordist: ${track.recordist}`;
+                metadata.innerText = `Location: ${track.location}. Recordist: ${track.recordist}. Source: ${track.source}`;
 
                 item.appendChild(title);
                 item.appendChild(metadata);
@@ -268,21 +233,17 @@
             });
         }
 
-        // Initialize audio and set duration
         function loadTrack(index) {
             currentTrackIndex = index;
             const currentTrack = tracks[currentTrackIndex];
             
-            // Clean up old audio to prevent overlaps and leaks
             if (currentAudio) {
                 currentAudio.pause();
-                currentAudio.removeAttribute('src'); // Free memory
+                currentAudio.removeAttribute('src');
                 currentAudio.load();
-                URL.revokeObjectURL(currentAudio.src); // Revoke the previous blob URL
+                URL.revokeObjectURL(currentAudio.src);
             }
 
-            // --- iOS OFFLINE AUDIO FIX (Keep this logic!) ---
-            // Fetch as a data blob to bypass iOS offline player bugs
             fetch(currentTrack.filename)
                 .then(response => response.blob())
                 .then(blob => {
@@ -292,21 +253,15 @@
                 })
                 .catch(error => {
                     console.error("Error loading offline audio:", error);
-                    // If one track fails, try to move to the next
                     playNext();
                 });
 
-            // Update UI
-            renderPlaylist(); // Highlight new active item
-            totalTimeText.innerText = "0:12"; // Set a dummy total duration for UI match.
-            // If you have correct duration, update totalTimeText here after currentAudio loads.
+            renderPlaylist();
+            totalTimeText.innerText = "0:12";
         }
 
         function playTrack(index) {
             loadTrack(index);
-            // Wait for audio to be ready before playing.
-            // In a real app, this should be after the `oncanplaythrough` event.
-            // To be safe, we add a brief delay for the blob fetch and initialization.
             setTimeout(() => {
                 currentAudio.play();
                 isPlaying = true;
@@ -315,22 +270,18 @@
         }
 
         function setupAudioListeners() {
-            // Update timeline as audio plays
             currentAudio.addEventListener('timeupdate', updateTimeline);
-            
-            // Auto-play next track when finished
             currentAudio.addEventListener('ended', playNext);
         }
 
         function playNext() {
             let nextIndex = currentTrackIndex + 1;
             
-            // If at the end, either stop or wrap back to the beginning
             if (nextIndex >= tracks.length) {
                 if (isLooping) {
-                    nextIndex = 0; // Wrap to start
+                    nextIndex = 0;
                 } else {
-                    currentAudio.pause(); // Stop and update UI
+                    currentAudio.pause();
                     isPlaying = false;
                     updateMediaIcons();
                     return; 
@@ -342,15 +293,14 @@
         function playPrevious() {
             let prevIndex = currentTrackIndex - 1;
             
-            // If at the start, optionally wrap back to the end
             if (prevIndex < 0) {
-                prevIndex = tracks.length - 1; // Wrap to end
+                prevIndex = tracks.length - 1;
             }
             playTrack(prevIndex);
         }
 
         function togglePlayPause() {
-            if (!currentAudio) return; // Prevent errors if no track loaded
+            if (!currentAudio) return;
             if (isPlaying) {
                 currentAudio.pause();
                 isPlaying = false;
@@ -367,23 +317,17 @@
         }
 
         function updateMediaIcons() {
-            // Toggles between ▶️ and ⏸️
             playPauseButton.innerText = isPlaying ? "⏸️" : "▶️";
         }
 
-        // Timeline functions
         function updateTimeline() {
             const currentTime = currentAudio.currentTime;
             currentTimeText.innerText = formatTime(currentTime);
 
-            // Need duration for proper progress bar updates. If it's 0:12 as in image, use that.
-            // For now, I'll update it based on true duration.
-            // Update range input if duration is available
             if (!isNaN(currentAudio.duration)) {
                 progressBar.max = currentAudio.duration;
                 progressBar.value = currentTime;
             } else {
-                // Keep dummy duration
                 totalTimeText.innerText = "0:12";
             }
         }
@@ -401,21 +345,16 @@
             return `${formattedMinutes}:${formattedSeconds}`;
         }
 
-        // Control button listeners
         document.getElementById('prev-button').onclick = playPrevious;
         document.getElementById('play-pause-button').onclick = togglePlayPause;
         document.getElementById('next-button').onclick = playNext;
         document.getElementById('loop-button').onclick = toggleLoop;
-        document.getElementById('hide-button').onclick = () => console.log('Hide clicked!'); // Placeholder
 
-        // Timeline seek listener
         progressBar.oninput = seekTo;
 
-        // Initialize the app
-        renderPlaylist(); // Render all items
-        loadTrack(0); // Load the first track and set up timeline
+        renderPlaylist();
+        loadTrack(0);
 
-        // --- OFFLINE SERVICE WORKER REGISTRATION (v5 update) ---
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
