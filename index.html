@@ -25,12 +25,13 @@
             color: var(--text-color);
             display: flex;
             justify-content: center;
+            overflow: hidden; 
         }
 
         #app-container {
             width: 100%;
             max-width: 450px;
-            height: 100vh;
+            height: 100dvh; 
             background-color: var(--bg-color);
             display: flex;
             flex-direction: column;
@@ -148,7 +149,6 @@
             text-align: center;
         }
 
-        /* --- Fixed Timeline Slider CSS --- */
         #progress-bar {
             flex-grow: 1;
             cursor: pointer;
@@ -172,7 +172,7 @@
             border: 1px solid #ccc;
             border-radius: 50%;
             cursor: pointer;
-            margin-top: -6px; /* perfectly centers the thumb on the track */
+            margin-top: -6px;
         }
 
         #progress-bar::-moz-range-track {
@@ -193,7 +193,7 @@
 
         #controls-bar {
             background-color: var(--controls-bg);
-            padding: 15px 25px;
+            padding: 15px 25px 40px 25px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -204,7 +204,7 @@
         .control-group {
             display: flex;
             align-items: center;
-            gap: 30px; 
+            gap: 20px; 
         }
 
         .media-icon {
@@ -212,10 +212,17 @@
             cursor: pointer;
             transition: 0.2s;
             color: var(--controls-color);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%; 
         }
 
         .media-icon.active {
-            color: #4da3ff;
+            background-color: #007aff;
+            color: #fff;
         }
     </style>
 </head>
@@ -242,7 +249,7 @@
         </div>
 
         <div id="controls-bar">
-            <div class="media-icon" id="loop-button" style="font-size: 20px;">🔁</div>
+            <div class="media-icon" id="loop-button">🔁</div>
             
             <div class="control-group">
                 <div class="media-icon" id="prev-button">⏪</div>
@@ -250,20 +257,20 @@
                 <div class="media-icon" id="next-button">⏩</div>
             </div>
 
-            <div class="media-icon" id="queue-button" style="font-size: 20px;">☰</div>
+            <div class="media-icon" id="queue-button">☰</div>
         </div>
 
     </div>
 
     <script>
         const tracks = [
-            { filename: 'Cerulean Mixtape.mp3', title: 'Cerulean Mixtape', location: 'Various Locations', recordist: 'Everett Ackley', source: 'Sibly' },
-            { filename: 'Sibly Cerulean Chitter Full.mp3', title: 'Chitter Full', location: 'Kentucky', recordist: 'Lang Elliott', source: 'Sibly' },
-            { filename: 'Sibly Cerulean Song 1.mp3', title: 'Song 1', location: 'Kentucky', recordist: 'Lang Elliott', source: 'Sibly' },
-            { filename: 'Sibly Cerulean Song 2.mp3', title: 'Song 2', location: 'Kentucky', recordist: 'Lang Elliott', source: 'Sibly' },
-            { filename: 'Sibly Cerulean Song 3.mp3', title: 'Song 3', location: 'Kentucky', recordist: 'Lang Elliott', source: 'Sibly' },
-            { filename: 'Sibly Cerulean Song 4.mp3', title: 'Song 4', location: 'New York', recordist: 'Bob McGuire', source: 'Sibly' },
-            { filename: 'Sibly Cerulean Song 5.mp3', title: 'Song 5', location: 'Arkansas', recordist: 'Lang Elliott', source: 'Sibly' }
+            { filename: 'Cerulean Mixtape.mp3', title: 'Cerulean Mixtape', location: 'Various Locations', recordist: 'Everett Ackley', source: 'Sibley' },
+            { filename: 'Sibley Cerulean Chitter Full.mp3', title: 'Sibley Chitter Full', location: 'Kentucky', recordist: 'Lang Elliott', source: 'Sibley' },
+            { filename: 'Sibley Cerulean Song 1.mp3', title: 'Sibley Song 1', location: 'Kentucky', recordist: 'Lang Elliott', source: 'Sibley' },
+            { filename: 'Sibley Cerulean Song 2.mp3', title: 'Sibley Song 2', location: 'Kentucky', recordist: 'Lang Elliott', source: 'Sibley' },
+            { filename: 'Sibley Cerulean Song 3.mp3', title: 'Sibley Song 3', location: 'Kentucky', recordist: 'Lang Elliott', source: 'Sibley' },
+            { filename: 'Sibley Cerulean Song 4.mp3', title: 'Sibley Song 4', location: 'New York', recordist: 'Bob McGuire', source: 'Sibley' },
+            { filename: 'Sibley Cerulean Song 5.mp3', title: 'Sibley Song 5', location: 'Arkansas', recordist: 'Lang Elliott', source: 'Sibley' }
         ];
 
         let currentTrackIndex = 0;
@@ -383,7 +390,6 @@
                 URL.revokeObjectURL(currentAudio.src);
             }
 
-            // Reset UI for new track
             totalTimeText.innerText = "-:--";
             progressBar.value = 0;
 
@@ -492,7 +498,6 @@
             const currentTime = currentAudio.currentTime;
             currentTimeText.innerText = formatTime(currentTime);
 
-            // Fetch true duration safely
             const duration = currentAudio.duration;
             if (duration && !isNaN(duration) && duration !== Infinity) {
                 progressBar.max = duration;
