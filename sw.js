@@ -1,5 +1,4 @@
-// Bumped to v7 to force the app to grab the new JPEG icon, new app name, and code fixes
-const CACHE_NAME = 'bird-player-v7';
+const CACHE_NAME = 'bird-player-v9';
 
 const urlsToCache = [
   'index.html',
@@ -7,12 +6,12 @@ const urlsToCache = [
   'icon.jpeg',
   'sw.js',
   'Cerulean%20Mixtape.mp3',
-  'Sibly%20Cerulean%20Chitter%20Full.mp3',
-  'Sibly%20Cerulean%20Song%201.mp3',
-  'Sibly%20Cerulean%20Song%202.mp3',
-  'Sibly%20Cerulean%20Song%203.mp3',
-  'Sibly%20Cerulean%20Song%204.mp3',
-  'Sibly%20Cerulean%20Song%205.mp3'
+  'Sibley%20Cerulean%20Chitter%20Full.mp3',
+  'Sibley%20Cerulean%20Song%201.mp3',
+  'Sibley%20Cerulean%20Song%202.mp3',
+  'Sibley%20Cerulean%20Song%203.mp3',
+  'Sibley%20Cerulean%20Song%204.mp3',
+  'Sibley%20Cerulean%20Song%205.mp3'
 ];
 
 self.addEventListener('install', event => {
