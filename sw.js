@@ -1,23 +1,24 @@
-// Bumped to v3 so the phone knows to grab the new files
-const CACHE_NAME = 'bird-player-v3';
+const CACHE_NAME = 'bird-player-v4';
 
-// Exact file names from your image
+// Use %20 to represent spaces, avoiding URL mismatches in the cache
 const urlsToCache = [
   'index.html',
   'manifest.json',
   'icon.png',
   'sw.js',
-  'Cerulean Mixtape.mp3',
-  'Sibly Cerulean Chitter Full.mp3',
-  'Sibly Cerulean Song 1.mp3',
-  'Sibly Cerulean Song 2.mp3',
-  'Sibly Cerulean Song 3.mp3',
-  'Sibly Cerulean Song 4.mp3',
-  'Sibly Cerulean Song 5.mp3'
+  'Cerulean%20Mixtape.mp3',
+  'Sibly%20Cerulean%20Chitter%20Full.mp3',
+  'Sibly%20Cerulean%20Song%201.mp3',
+  'Sibly%20Cerulean%20Song%202.mp3',
+  'Sibly%20Cerulean%20Song%203.mp3',
+  'Sibly%20Cerulean%20Song%204.mp3',
+  'Sibly%20Cerulean%20Song%205.mp3'
 ];
 
-// Install the Service Worker and cache the files
 self.addEventListener('install', event => {
+  // Forces the new Service Worker to take over immediately
+  self.skipWaiting(); 
+  
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
@@ -26,10 +27,27 @@ self.addEventListener('install', event => {
   );
 });
 
-// Intercept network requests and serve from cache if offline
+self.addEventListener('activate', event => {
+  // Deletes any old cache versions (like v1, v2, v3) to free up space
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          if (cacheName !== CACHE_NAME) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
+  // Tell the active clients to use the new cache immediately
+  self.clients.claim(); 
+});
+
 self.addEventListener('fetch', event => {
   event.respondWith(
-    caches.match(event.request)
+    // ignoreSearch helps prevent mismatches if query parameters get added
+    caches.match(event.request, { ignoreSearch: true })
       .then(response => {
         return response || fetch(event.request);
       })
