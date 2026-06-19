@@ -42,7 +42,7 @@
             height: 60px;
             display: flex;
             align-items: center;
-            justify-content: center; /* Centered the title since buttons are gone */
+            justify-content: center; 
             padding: 0 15px;
             background: var(--bg-color);
             border-bottom: 1px solid #ccc;
@@ -132,14 +132,14 @@
             padding: 15px;
             display: flex;
             align-items: center;
-            justify-content: center; /* Centered the controls since hide button is gone */
+            justify-content: center; 
             color: var(--controls-color);
         }
 
         .control-group {
             display: flex;
             align-items: center;
-            gap: 25px; /* Spaced out slightly more for easier tapping */
+            gap: 25px; 
         }
 
         .media-icon {
@@ -190,13 +190,13 @@
         // --- NATIVE-STYLE MOBILE APP LOGIC ---
 
         const tracks = [
-            { filename: 'Cerulean Mixtape.mp3', name: 'Cerulean Mixtape', location: 'Various Locations', recordist: 'Everett Ackley', title: 'Song', source: 'Sibly' },
-            { filename: 'Sibly Cerulean Chitter Full.mp3', name: 'Chitter Full', location: 'Kentucky', recordist: 'Lang Elliott', title: 'Song', source: 'Sibly' },
-            { filename: 'Sibly Cerulean Song 1.mp3', name: 'Song 1', location: 'Kentucky', recordist: 'Lang Elliott', title: 'Song', source: 'Sibly' },
-            { filename: 'Sibly Cerulean Song 2.mp3', name: 'Song 2', location: 'Kentucky', recordist: 'Lang Elliott', title: 'Song', source: 'Sibly' },
-            { filename: 'Sibly Cerulean Song 3.mp3', name: 'Song 3', location: 'Kentucky', recordist: 'Lang Elliott', title: 'Song', source: 'Sibly' },
-            { filename: 'Sibly Cerulean Song 4.mp3', name: 'Song 4', location: 'New York', recordist: 'Bob McGuire', title: 'Song', source: 'Sibly' },
-            { filename: 'Sibly Cerulean Song 5.mp3', name: 'Song 5', location: 'Alaska', recordist: 'Lang Elliott', title: 'Song', source: 'Sibly' }
+            { filename: 'Cerulean Mixtape.mp3', title: 'Cerulean Mixtape', location: 'Various Locations', recordist: 'Everett Ackley', source: 'Sibly' },
+            { filename: 'Sibly Cerulean Chitter Full.mp3', title: 'Chitter Full', location: 'Kentucky', recordist: 'Lang Elliott', source: 'Sibly' },
+            { filename: 'Sibly Cerulean Song 1.mp3', title: 'Song 1', location: 'Kentucky', recordist: 'Lang Elliott', source: 'Sibly' },
+            { filename: 'Sibly Cerulean Song 2.mp3', title: 'Song 2', location: 'Kentucky', recordist: 'Lang Elliott', source: 'Sibly' },
+            { filename: 'Sibly Cerulean Song 3.mp3', title: 'Song 3', location: 'Kentucky', recordist: 'Lang Elliott', source: 'Sibly' },
+            { filename: 'Sibly Cerulean Song 4.mp3', title: 'Song 4', location: 'New York', recordist: 'Bob McGuire', source: 'Sibly' },
+            { filename: 'Sibly Cerulean Song 5.mp3', title: 'Song 5', location: 'Arkansas', recordist: 'Lang Elliott', source: 'Sibly' }
         ];
 
         let currentTrackIndex = 0;
