@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cerulean Warbler</title>
+    <title>Cerulean Coke</title>
     
     <link rel="manifest" href="manifest.json">
     
     <style>
-        /* --- Native-Style Mobile Styles --- */
         :root {
             --bg-color: #fff;
             --text-color: #000;
@@ -46,28 +45,68 @@
             padding: 0 15px;
             background: var(--bg-color);
             border-bottom: 1px solid #ccc;
+            z-index: 20;
         }
 
         #title {
             font-size: 18px;
-            font-weight: 500;
+            font-weight: 600;
+        }
+
+        #content-area {
+            position: relative;
+            flex-grow: 1;
+            overflow: hidden;
+        }
+
+        #playlist-container, #queue-view {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
         }
 
         #playlist-container {
+            overflow-y: scroll;
+            padding-bottom: 20px;
+        }
+
+        #queue-view {
+            display: none;
+            background: var(--bg-color);
+            z-index: 10;
+            flex-direction: column;
+        }
+
+        .queue-header {
+            padding: 15px;
+            font-weight: bold;
+            font-size: 18px;
+            border-bottom: 1px solid #eee;
+            background: #fafafa;
+        }
+
+        #queue-list {
             flex-grow: 1;
             overflow-y: scroll;
-            padding-bottom: 10px;
         }
 
         .track-item {
-            padding: 15px;
+            padding: 12px 15px;
             border-bottom: 1px solid #eee;
-            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             transition: 0.2s;
         }
 
         .track-item.active {
             background-color: var(--active-track-bg);
+        }
+
+        .track-info {
+            flex-grow: 1;
+            min-width: 0;
+            cursor: pointer;
+            padding-right: 15px;
         }
 
         .track-title {
@@ -77,9 +116,20 @@
         }
 
         .track-metadata {
-            font-size: 14px;
+            font-size: 12px;
             color: #777;
-            line-height: 1.4;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .action-btn {
+            font-size: 20px;
+            padding: 5px 10px;
+            color: #007aff;
+            cursor: pointer;
+            background: none;
+            border: none;
         }
 
         #timeline-container {
@@ -88,6 +138,7 @@
             align-items: center;
             gap: 10px;
             border-top: 1px solid #ccc;
+            z-index: 20;
         }
 
         #current-time, #total-time {
@@ -97,30 +148,43 @@
             text-align: center;
         }
 
+        /* --- Fixed Timeline Slider CSS --- */
         #progress-bar {
             flex-grow: 1;
             cursor: pointer;
             -webkit-appearance: none;
+            background: transparent;
+            margin: 0;
+        }
+        
+        #progress-bar::-webkit-slider-runnable-track {
+            width: 100%;
             height: 4px;
             background: #d3d3d3;
             border-radius: 2px;
-            outline: none;
         }
 
         #progress-bar::-webkit-slider-thumb {
             -webkit-appearance: none;
-            appearance: none;
-            width: 15px;
-            height: 15px;
+            height: 16px;
+            width: 16px;
             background: #fff;
             border: 1px solid #ccc;
             border-radius: 50%;
             cursor: pointer;
-            margin-top: -5.5px;
+            margin-top: -6px; /* perfectly centers the thumb on the track */
         }
+
+        #progress-bar::-moz-range-track {
+            width: 100%;
+            height: 4px;
+            background: #d3d3d3;
+            border-radius: 2px;
+        }
+
         #progress-bar::-moz-range-thumb {
-            width: 15px;
-            height: 15px;
+            height: 16px;
+            width: 16px;
             background: #fff;
             border: 1px solid #ccc;
             border-radius: 50%;
@@ -129,31 +193,29 @@
 
         #controls-bar {
             background-color: var(--controls-bg);
-            padding: 15px;
+            padding: 15px 25px;
             display: flex;
             align-items: center;
-            justify-content: center; 
+            justify-content: space-between;
             color: var(--controls-color);
+            z-index: 20;
         }
 
         .control-group {
             display: flex;
             align-items: center;
-            gap: 25px; 
+            gap: 30px; 
         }
 
         .media-icon {
             font-size: 24px;
             cursor: pointer;
             transition: 0.2s;
-        }
-
-        .media-icon:hover {
-            color: #ddd;
+            color: var(--controls-color);
         }
 
         .media-icon.active {
-            color: #007aff;
+            color: #4da3ff;
         }
     </style>
 </head>
@@ -162,33 +224,38 @@
     <div id="app-container">
 
         <div id="header">
-            <div id="title">Cerulean Warbler</div>
+            <div id="title">Cerulean Coke</div>
         </div>
 
-        <div id="playlist-container">
-            <!-- Items added via JavaScript -->
+        <div id="content-area">
+            <div id="playlist-container"></div>
+            <div id="queue-view">
+                <div class="queue-header">Up Next</div>
+                <div id="queue-list"></div>
+            </div>
         </div>
 
         <div id="timeline-container">
             <span id="current-time">0:00</span>
             <input type="range" id="progress-bar" value="0" step="1">
-            <span id="total-time">0:12</span>
+            <span id="total-time">-:--</span>
         </div>
 
         <div id="controls-bar">
+            <div class="media-icon" id="loop-button" style="font-size: 20px;">🔁</div>
+            
             <div class="control-group">
                 <div class="media-icon" id="prev-button">⏪</div>
                 <div class="media-icon" id="play-pause-button">▶️</div>
                 <div class="media-icon" id="next-button">⏩</div>
-                <div class="media-icon" id="loop-button">🔄</div>
             </div>
+
+            <div class="media-icon" id="queue-button" style="font-size: 20px;">☰</div>
         </div>
 
     </div>
 
     <script>
-        // --- NATIVE-STYLE MOBILE APP LOGIC ---
-
         const tracks = [
             { filename: 'Cerulean Mixtape.mp3', title: 'Cerulean Mixtape', location: 'Various Locations', recordist: 'Everett Ackley', source: 'Sibly' },
             { filename: 'Sibly Cerulean Chitter Full.mp3', title: 'Chitter Full', location: 'Kentucky', recordist: 'Lang Elliott', source: 'Sibly' },
@@ -202,14 +269,18 @@
         let currentTrackIndex = 0;
         let currentAudio = null;
         let isPlaying = false;
-        let isLooping = false;
+        
+        let loopMode = 0; 
+        let upNextQueue = []; 
 
         const playlistContainer = document.getElementById('playlist-container');
+        const queueList = document.getElementById('queue-list');
         const progressBar = document.getElementById('progress-bar');
         const currentTimeText = document.getElementById('current-time');
         const totalTimeText = document.getElementById('total-time');
         const playPauseButton = document.getElementById('play-pause-button');
         const loopButton = document.getElementById('loop-button');
+        const queueButton = document.getElementById('queue-button');
 
         function renderPlaylist() {
             playlistContainer.innerHTML = "";
@@ -217,7 +288,10 @@
                 const item = document.createElement('div');
                 item.classList.add('track-item');
                 if (index === currentTrackIndex) item.classList.add('active');
-                item.onclick = () => playTrack(index);
+
+                const infoDiv = document.createElement('div');
+                infoDiv.classList.add('track-info');
+                infoDiv.onclick = () => playTrack(index);
 
                 const title = document.createElement('div');
                 title.classList.add('track-title');
@@ -227,10 +301,75 @@
                 metadata.classList.add('track-metadata');
                 metadata.innerText = `Location: ${track.location}. Recordist: ${track.recordist}. Source: ${track.source}`;
 
-                item.appendChild(title);
-                item.appendChild(metadata);
+                infoDiv.appendChild(title);
+                infoDiv.appendChild(metadata);
+
+                const addBtn = document.createElement('button');
+                addBtn.classList.add('action-btn');
+                addBtn.innerText = "➕";
+                addBtn.onclick = () => addToQueue(index);
+
+                item.appendChild(infoDiv);
+                item.appendChild(addBtn);
                 playlistContainer.appendChild(item);
             });
+        }
+
+        function renderQueue() {
+            queueList.innerHTML = "";
+            if (upNextQueue.length === 0) {
+                queueList.innerHTML = "<div style='padding: 20px; color: #777; text-align: center;'>Queue is empty</div>";
+                return;
+            }
+
+            upNextQueue.forEach((trackIndex, queuePosition) => {
+                const track = tracks[trackIndex];
+                const item = document.createElement('div');
+                item.classList.add('track-item');
+
+                const infoDiv = document.createElement('div');
+                infoDiv.classList.add('track-info');
+
+                const title = document.createElement('div');
+                title.classList.add('track-title');
+                title.innerText = track.title;
+
+                const metadata = document.createElement('div');
+                metadata.classList.add('track-metadata');
+                metadata.innerText = `Location: ${track.location}`;
+
+                infoDiv.appendChild(title);
+                infoDiv.appendChild(metadata);
+
+                const removeBtn = document.createElement('button');
+                removeBtn.classList.add('action-btn');
+                removeBtn.style.color = "#ff3b30";
+                removeBtn.innerText = "❌";
+                removeBtn.onclick = () => {
+                    upNextQueue.splice(queuePosition, 1);
+                    renderQueue();
+                };
+
+                item.appendChild(infoDiv);
+                item.appendChild(removeBtn);
+                queueList.appendChild(item);
+            });
+        }
+
+        function toggleQueueView() {
+            const qView = document.getElementById('queue-view');
+            if (qView.style.display === 'none' || qView.style.display === '') {
+                qView.style.display = 'flex';
+                queueButton.classList.add('active');
+            } else {
+                qView.style.display = 'none';
+                queueButton.classList.remove('active');
+            }
+        }
+
+        function addToQueue(index) {
+            upNextQueue.push(index);
+            renderQueue();
         }
 
         function loadTrack(index) {
@@ -244,11 +383,18 @@
                 URL.revokeObjectURL(currentAudio.src);
             }
 
+            // Reset UI for new track
+            totalTimeText.innerText = "-:--";
+            progressBar.value = 0;
+
             fetch(currentTrack.filename)
                 .then(response => response.blob())
                 .then(blob => {
                     const objectUrl = URL.createObjectURL(blob);
                     currentAudio = new Audio(objectUrl);
+                    
+                    if (loopMode === 2) currentAudio.loop = true; 
+                    
                     setupAudioListeners();
                 })
                 .catch(error => {
@@ -256,32 +402,40 @@
                     playNext();
                 });
 
-            renderPlaylist();
-            totalTimeText.innerText = "0:12";
+            renderPlaylist(); 
         }
 
         function playTrack(index) {
             loadTrack(index);
             setTimeout(() => {
-                currentAudio.play();
-                isPlaying = true;
-                updateMediaIcons();
+                if(currentAudio) {
+                    currentAudio.play();
+                    isPlaying = true;
+                    updateMediaIcons();
+                }
             }, 100);
         }
 
         function setupAudioListeners() {
             currentAudio.addEventListener('timeupdate', updateTimeline);
-            currentAudio.addEventListener('ended', playNext);
+            currentAudio.addEventListener('ended', playNext); 
         }
 
         function playNext() {
+            if (upNextQueue.length > 0) {
+                const queuedIndex = upNextQueue.shift();
+                renderQueue();
+                playTrack(queuedIndex);
+                return;
+            }
+
             let nextIndex = currentTrackIndex + 1;
             
             if (nextIndex >= tracks.length) {
-                if (isLooping) {
+                if (loopMode === 1) { 
                     nextIndex = 0;
-                } else {
-                    currentAudio.pause();
+                } else { 
+                    if(currentAudio) currentAudio.pause();
                     isPlaying = false;
                     updateMediaIcons();
                     return; 
@@ -292,7 +446,6 @@
 
         function playPrevious() {
             let prevIndex = currentTrackIndex - 1;
-            
             if (prevIndex < 0) {
                 prevIndex = tracks.length - 1;
             }
@@ -312,8 +465,21 @@
         }
 
         function toggleLoop() {
-            isLooping = !isLooping;
-            loopButton.classList.toggle('active', isLooping);
+            loopMode = (loopMode + 1) % 3;
+            
+            if (loopMode === 0) {
+                loopButton.innerText = "🔁";
+                loopButton.classList.remove('active');
+                if (currentAudio) currentAudio.loop = false;
+            } else if (loopMode === 1) {
+                loopButton.innerText = "🔁";
+                loopButton.classList.add('active');
+                if (currentAudio) currentAudio.loop = false;
+            } else if (loopMode === 2) {
+                loopButton.innerText = "🔂"; 
+                loopButton.classList.add('active');
+                if (currentAudio) currentAudio.loop = true;
+            }
         }
 
         function updateMediaIcons() {
@@ -321,38 +487,41 @@
         }
 
         function updateTimeline() {
+            if (!currentAudio) return;
+            
             const currentTime = currentAudio.currentTime;
             currentTimeText.innerText = formatTime(currentTime);
 
-            if (!isNaN(currentAudio.duration)) {
-                progressBar.max = currentAudio.duration;
+            // Fetch true duration safely
+            const duration = currentAudio.duration;
+            if (duration && !isNaN(duration) && duration !== Infinity) {
+                progressBar.max = duration;
                 progressBar.value = currentTime;
-            } else {
-                totalTimeText.innerText = "0:12";
+                totalTimeText.innerText = formatTime(duration);
             }
         }
 
         function seekTo(event) {
-            const seekTime = event.target.value;
-            currentAudio.currentTime = seekTime;
+            if (currentAudio) {
+                currentAudio.currentTime = event.target.value;
+            }
         }
 
         function formatTime(seconds) {
             const minutes = Math.floor(seconds / 60);
             const remainingSeconds = Math.floor(seconds % 60);
-            const formattedMinutes = minutes.toString();
-            const formattedSeconds = remainingSeconds.toString().padStart(2, '0');
-            return `${formattedMinutes}:${formattedSeconds}`;
+            return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
         }
 
         document.getElementById('prev-button').onclick = playPrevious;
         document.getElementById('play-pause-button').onclick = togglePlayPause;
         document.getElementById('next-button').onclick = playNext;
-        document.getElementById('loop-button').onclick = toggleLoop;
-
+        loopButton.onclick = toggleLoop;
+        queueButton.onclick = toggleQueueView;
         progressBar.oninput = seekTo;
 
         renderPlaylist();
+        renderQueue();
         loadTrack(0);
 
         if ('serviceWorker' in navigator) {
