@@ -1,10 +1,10 @@
 {
-  "name": "Cerulean Cocaine",
+  "name": "Cerulean Coke",
   "short_name": "Cerulean Coke",
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#000000",
-  "theme_color": "#ffffff",
+  "theme_color": "#2563eb",
   "icons": [
     {
       "src": "icon.jpeg",
